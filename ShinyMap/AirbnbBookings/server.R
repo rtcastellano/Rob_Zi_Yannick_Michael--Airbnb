@@ -1,6 +1,3 @@
-#####By Ruonan Ding#########
-############################
-
 library(shiny)
 library(dplyr)
 library(ggplot2)
@@ -19,39 +16,43 @@ shinyServer(function(input, output, session) {
   #   
   # })
   
+  df <- read.csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv')
   countries = read.csv("../../../data/countries.csv", stringsAsFactors = F)
   t = data.frame(abr = c("AU", "CA", "DE", "ES", "FR", "GB", "IT", "NL", "PT", "US"), country.name = c("Australia", "Canada", "Germany", "Spain", "France", "United Kingdom", "Italy", "Netherlands", "Portugal", "United States"))
   merged = merge(countries, t, by.x = "country_destination", by.y = "abr", all.x = T)
-  merged$html.tooltip1 = c(HTML('a<b>e</b>'), paste(br(), '5'))
-  merged$html.tooltip2 = c('Im tryingt this really long line to see what happends....Inot w dcjnwicuwnkdcjnwkdjcnwlidcnejnc', 'd')
+  all_countries = merge(df['COUNTRY'], merged, by.x = 'COUNTRY', by.y = 'country.name', all.x = T)
+  all_countries$hover <- with(all_countries, paste(COUNTRY, '<br>', 
+                                                   "Latitude: ", lat_destination, 
+                                                   '<br>', "Longitude: ", lng_destination,
+                                                   '<br>', "Distance from US (km): ", distance_km,
+                                                   '<br>', "Size of country (km2): ", destination_km2,
+                                                   '<br>', "Language: ", destination_language,
+                                                   '<br>', "Levenshtein distance of language: ", language_levenshtein_distance))
+  all_countries$pred = runif(nrow(all_countries), -1, 1)
   
-  output$GeoLayer1 <- renderGvis({
-    gvisGeoMap(merged, locationvar = "country.name", hovervar = "html.tooltip1",
-                 options=list(width=800,height=450, colors= "['green']", tooltip = "{isHtml: 'true'}",
-                              title = "Title",
-                              legend = 'none'))
-    
+  # light grey boundaries
+  l <- list(color = toRGB("grey"), width = 0.5)
+  
+  # specify map projection/options
+  g <- list(
+    showframe = FALSE,
+    showcoastlines = FALSE,
+    projection = list(type = 'Robinson')
+  )
+  
+  output$plot <- renderPlotly({
+    plot_ly(all_countries, z = pred, 
+            text = hover, 
+            locations = COUNTRY,
+            type = 'choropleth',
+            marker = list(line = l),
+            colorbar = list(title = "Percent more <br>likely to book"),
+            colors = 'Blues', locationmode = "country names") %>% 
+      layout(geo = g,
+             title = 'Likelihood of booking')
   })
-  # 
-  # au = data.frame(name = "Australia", been = "Rob has not been here")
-  # ca = data.frame(name = "Canada", been = "Rob has been here")
-  # de = list(name = "Germany", been = "Rob has been here")
-  # es = list(name = "Spain", been = "Rob has been here")
-  # fr = list(name = "France", been = "Rob has been here")
-  # gb = list(name = "United Kingdom", been = "Rob has been here")
-  # it = list(name = "Italy", been = "Rob has not been here")
-  # nl = list(name = "Netherlands", been = "Rob has not been here")
-  # pt = list(name = "Portugal", been = "Rob has been here")
-  # us = list(name = "United States", been = "Rob has been here")
-  # 
-  # 
-  # countries = data.frame(rbind(au, ca))
-  # countries = data.frame(rbind(au, ca, de, es, fr, gb, it, nl, pt, us))
-  # 
-  # nums = c(1, 2)
-  # nums2 = c(3, 4)
-  # y = data.frame(cbind(countries, nums, nums2))
-  # 
+
+  
   output$aboutus <- renderUI({
   HTML(paste(
     h3("Rob Castellano:"),

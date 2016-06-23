@@ -1,6 +1,3 @@
-#####By Ruonan Ding#########
-############################
-
 library(shiny)
 library(shinydashboard)
 library(shinythemes)
@@ -12,7 +9,7 @@ shinyUI(navbarPage("Airbnb",   id = "nav",
            fluidRow(
              box(            
               title = "Title", 
-              htmlOutput("GeoLayer1"),
+              plotlyOutput('plot'),
               "Hello",
               width = 12
              )
