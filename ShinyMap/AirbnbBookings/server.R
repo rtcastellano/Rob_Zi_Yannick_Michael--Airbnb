@@ -6,6 +6,7 @@ library(googleVis)
 library(shinydashboard)
 library(shinythemes)
 library(plotly)
+library(RColorBrewer)
 
 
 shinyServer(function(input, output, session) {
