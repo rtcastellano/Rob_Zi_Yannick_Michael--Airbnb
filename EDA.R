@@ -37,8 +37,7 @@ ggplot(df, aes(x = age)) + geom_bar(aes(fill = gender), position = "fill") +
 ggplot(df, aes(x = country_destination)) + 
   geom_bar(aes(fill = age), position = "fill") + 
   scale_fill_manual(values = rev(colorRampPalette(brewer.pal(9, "RdBu"))(21)), na.value = "grey") +
-  theme_minimal() + xlab("Country") + ylab("Percent") + ggtitle("Share of age by country of first destination")
-  
+  theme_minimal() + xlab("Country") + ylab("Percent") + ggtitle("Share of age by country\nof first destination")
 
 
 ggplot(df, aes(x = bookings)) + 
@@ -65,6 +64,10 @@ ggplot(df, aes(x = lag_account_created_first_active)) +
 ggplot(df, aes(x = country_destination)) + 
   geom_bar(aes(fill = bookings), position = "fill") +
   scale_fill_brewer(palette = "Set1", name = "When user booked", labels = c("Early", "Did not book", "Waited")) +
-  xlab("Country") + ylab("Percent") + ggtitle("How long users wait to book, by country of first destination") +
+  xlab("Country") + ylab("Percent") + ggtitle("How long users wait to book,\nby country of first destination") +
   theme_minimal()
 
+# ggplot(df, aes(x = counts)) + geom_density(aes(fill = (country_destination == 'NDF'), alpha = .2)) + scale_x_log10()
+# 
+# ggplot(df, aes(x = sum_secs_elapsed)) + geom_density(aes(fill =(country_destination == 'NDF'), alpha = .2)) + 
+#   scale_x_log10()
